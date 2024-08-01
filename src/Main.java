@@ -1,11 +1,29 @@
 import java.util.Scanner;
 
+import javax.swing.text.BadLocationException;
+
 public class Main {
 	static boolean running = true;
 	static final String stop = "QUIT";
 	static final String talk = "SAY ";
 	
+	
+	
+	public static void main(String[] args) {
+		Netpanel.display();
+		try {
+			TextPanel.display();
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
+	
+	
+	
+	//Old method from console days. let's run the UI
+	/**
 	public static void main(String[] args) {
     	boolean sending = args[0].equalsIgnoreCase("true");
     	Connection link;
@@ -28,6 +46,7 @@ public class Main {
     			System.out.println("Please restart the program");
     	}
 	}
+	**/
 	
 	public static void sending(Connection link, Scanner input) throws RTSPException {
 		
