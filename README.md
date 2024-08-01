@@ -7,7 +7,7 @@ Once the Receiver gets the message, the Sender and Receiver swap states and the 
 
 ## Receiver mode
 
-To launch the program in the Receiver mode, type: 
+To launch the program in the Receiver mode, navigate to the JAR's directory and type: 
 >java -jar InterMessage.jar False [port#]
 
 where [port#] is the port you want to listen on to make a connection.
@@ -18,7 +18,7 @@ Once all of that is done though, you now have a program that will await a connec
 
 ## Sender mode
 
-To launch the program in Sender mode, type:
+To launch the program in Sender mode, navigate to the JAR's directory and type:
 >java -jar InterMessage.jar True [port#]  [Host address] 
 
 where [port#] is the port of the sender you want to connect to and [Host address] is the host address of the sender you want to connect to.
