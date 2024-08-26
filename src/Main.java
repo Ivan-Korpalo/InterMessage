@@ -10,9 +10,13 @@ public class Main {
 	
 	
 	public static void main(String[] args) {
-		Netpanel.display();
+		Netpanel window = new Netpanel();
+		
+		window.display();
+		
 		try {
-			TextPanel.display();
+			TextPanel t = new TextPanel();
+			t.display();
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
