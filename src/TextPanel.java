@@ -1,4 +1,6 @@
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,6 +14,9 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 public class TextPanel {
+	
+	String username = "PLACEHOLDERUSER";
+	
 	JFrame frame;
 	JTextPane messagelog;
 	SimpleAttributeSet boldSet;
@@ -58,7 +63,20 @@ public class TextPanel {
 		//Make dialogue panel
 		messenger = new JPanel(new BorderLayout());
 		send = new JButton("Say");
+		
+		
 		message = new JTextField();
+		
+		send.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				try {
+					write(username, message.getText());
+				} catch (BadLocationException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+	        }  
+	    });
 		
 		messenger.add(send, BorderLayout.WEST);
 		messenger.add(message, BorderLayout.CENTER);
@@ -70,6 +88,16 @@ public class TextPanel {
 	
 	public void display() throws BadLocationException{
 		frame.setVisible(true);
+	}
+	
+	/*
+	public void write(String s) throws BadLocationException {
+		messages.insertString(messages.getLength(), "\n"+s, basicSet);		
+	}*/
+	
+	public void write(String username, String content) throws BadLocationException {
+		messages.insertString(messages.getLength(), "\n"+username+": ", boldSet);
+		messages.insertString(messages.getLength(), content, basicSet);	
 	}
 
 }

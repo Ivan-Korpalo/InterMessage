@@ -1,0 +1,13 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch GUI-WIP
+# Changes to be committed:
+#	modified:   bin/Main.class
+#	modified:   bin/Netpanel.class
+#	modified:   bin/TextPanel.class
+#	modified:   src/Main.java
+#	modified:   src/Netpanel.java
+#	modified:   src/TextPanel.java
+#
