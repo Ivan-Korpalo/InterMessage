@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
@@ -15,7 +16,10 @@ import javax.swing.text.StyleConstants;
 
 public class TextPanel {
 	
-	String username = "PLACEHOLDERUSER";
+	private Connection session;
+	
+	String username = "MYSELF";
+	String sysname = "CONSOLE";
 	
 	JFrame frame;
 	JTextPane messagelog;
@@ -45,13 +49,13 @@ public class TextPanel {
 		basicSet = new SimpleAttributeSet();
 		
 		//initialization
-		messagelog.setCharacterAttributes(boldSet, true);
-		messagelog.setText("Username here: ");
+		//messagelog.setCharacterAttributes(boldSet, true);
+		//messagelog.setText("Username here: ");
 		
 		//modification
 		messages = messagelog.getStyledDocument();
-		messages.insertString(messages.getLength(), "Line 1", basicSet);
-		messages.insertString(messages.getLength(), "\nLine 2", basicSet);
+		//messages.insertString(messages.getLength(), "Line 1", basicSet);
+		//messages.insertString(messages.getLength(), "\nLine 2", basicSet);
 		
 		
 		//Wrap it in a Scroll pane
@@ -81,10 +85,46 @@ public class TextPanel {
 		messenger.add(send, BorderLayout.WEST);
 		messenger.add(message, BorderLayout.CENTER);
 		frame.add(messenger, BorderLayout.SOUTH);
-
+		
 		
 		//frame.setVisible(true);
-	}
+	}	
+	
+	public TextPanel(int port) throws BadLocationException {//use this when hosting a session
+		this();
+		send.setText("Wait");
+		send.setEnabled(false);
+		
+		
+		frame.setVisible(true);
+		try {
+			write(sysname, "Hosting on port: "+port+". Awaiting connection");
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						try {
+							session = Connection.receiverConnection(port);
+						} catch (RTSPException e) {
+							write(sysname, e.getMessage());
+						}
+						write(sysname, "Connection established. Awaiting message from sender");
+						
+						//enable buttons.
+					} catch (BadLocationException e) {
+						//To-do proper error handling
+					}
+					
+			    	//receiving(session, new Scanner(System.in));
+				}
+			});
+	    		
+	    } catch (BadLocationException e) {
+	    	//To-do proper error handling
+	    } //finally {
+	    
+		
+	    //}
+	};
 	
 	public void display() throws BadLocationException{
 		frame.setVisible(true);
@@ -96,8 +136,8 @@ public class TextPanel {
 	}*/
 	
 	public void write(String username, String content) throws BadLocationException {
-		messages.insertString(messages.getLength(), "\n"+username+": ", boldSet);
-		messages.insertString(messages.getLength(), content, basicSet);	
+		messages.insertString(messages.getLength(), username+": ", boldSet);
+		messages.insertString(messages.getLength(), content+"\n", basicSet);	
 	}
 
 }

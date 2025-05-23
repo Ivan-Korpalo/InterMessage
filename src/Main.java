@@ -1,5 +1,6 @@
 import java.util.Scanner;
 
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 
 public class Main {
@@ -10,17 +11,15 @@ public class Main {
 	
 	
 	public static void main(String[] args) {
-		Netpanel window = new Netpanel();
+		MicroNet window = new MicroNet();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				window.display();
+			}
+		});
+		//window.display();
 		
-		window.display();
-		
-		try {
-			TextPanel t = new TextPanel();
-			t.display();
-		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	

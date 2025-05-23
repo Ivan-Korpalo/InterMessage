@@ -30,6 +30,7 @@ public class Netpanel {
 	JLabel netlog;
 	
 	//I am missing the textfield that displays the log
+	JLabel logtext;
 	
 	public Netpanel() {
 		int ynetworkoffset = 0;
@@ -95,47 +96,15 @@ public class Netpanel {
 		netlog = new JLabel("log:");
 		netlog.setBounds(20,145+ynetworkoffset, 55,20);
 		panel.add(netlog);
+		
+		
 		//Dialogue box not yet implemented
+		//gonna do it as a JLabel as a quick fix
+		logtext = new JLabel("Insert error text here...............");
+		logtext.setBounds(20,145+ynetworkoffset, 55,20);
+		panel.add(logtext);
 		
 		
-		
-		
-		
-	
-		/*
-		//Make the buttons work
-		sender.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){  
-				try {
-					if ( session == null) {
-				
-						session = Connection.senderConnection( addaddress.getText() , Integer.parseInt(addport.getText()));
-						session.waitR();
-						System.out.println("Connection established. Type a command and press enter.");
-						try {
-							TextPanel.display();
-						} catch (BadLocationException bl) {
-							// TODO Auto-generated catch block
-							bl.printStackTrace();
-						}
-						
-						
-						//sending(session, new Scanner(System.in));
-					} else {
-						
-						
-					}
-				} catch (RTSPException er) {
-	    			System.out.println(er);
-	    			System.out.println("Please restart the program");
-				}
-	        }  
-	    });
-		
-		
-		
-		receiver.addActionListener(null);
-		*/
 	}
 	
 	public void display() {
