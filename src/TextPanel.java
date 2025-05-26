@@ -19,6 +19,7 @@ public class TextPanel {
 	private Connection session;
 	
 	String username = "MYSELF";
+	String othername = "THEM";
 	String sysname = "CONSOLE";
 	
 	JFrame frame;
@@ -33,7 +34,7 @@ public class TextPanel {
 	JButton send;
 	JTextField message;
 	
-	public TextPanel() throws BadLocationException {
+	private TextPanel() throws BadLocationException {
 
 		//Frame info
 		frame = new JFrame("Chat info");
@@ -48,14 +49,8 @@ public class TextPanel {
 		StyleConstants.setBold(boldSet, true);
 		basicSet = new SimpleAttributeSet();
 		
-		//initialization
-		//messagelog.setCharacterAttributes(boldSet, true);
-		//messagelog.setText("Username here: ");
-		
 		//modification
 		messages = messagelog.getStyledDocument();
-		//messages.insertString(messages.getLength(), "Line 1", basicSet);
-		//messages.insertString(messages.getLength(), "\nLine 2", basicSet);
 		
 		
 		//Wrap it in a Scroll pane
@@ -74,7 +69,7 @@ public class TextPanel {
 		send.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				try {
-					write(username, message.getText());
+					send(username, message.getText());
 				} catch (BadLocationException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -90,8 +85,14 @@ public class TextPanel {
 		//frame.setVisible(true);
 	}	
 	
-	public TextPanel(int port) throws BadLocationException {//use this when hosting a session
+	private TextPanel(String username) throws BadLocationException {
 		this();
+		this.username = username;
+	}
+	
+	
+	public TextPanel(String name, int port) throws BadLocationException {//use this when hosting a session
+		this(name);
 		send.setText("Wait");
 		send.setEnabled(false);
 		
@@ -99,15 +100,102 @@ public class TextPanel {
 		frame.setVisible(true);
 		try {
 			write(sysname, "Hosting on port: "+port+". Awaiting connection");
+		} catch (BadLocationException e) {
+	    	//To-do proper error handling
+	    } 
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					try {
+						session = Connection.receiverConnection(port);
+						session.rak();
+						
+						String introduction = session.readString()[0]; //any other junk is simply ignored
+						//System.out.println("received :"+introduction);
+						
+						if (introduction.substring(0,4).equals("ELO ")){
+							othername = introduction.substring(4);
+						} else {
+							throw new RTSPException("Introduction failed. Aborting Connection. Please close window");
+						}
+						
+						session.sendString("ELO "+username);
+						session.waitA();
+						write(sysname, "Connection established. Awaiting message from sender");
+						
+						//newly added
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								try {
+									try {
+										String[] response = session.readString(); //returns a validated message
+										write(othername, strip(response[0]));
+										for (int i = 1; i < response.length ; i++) {//prints validated message
+											write(othername, response[i]);
+										}
+									
+										session.waitR();
+										send.setText("Say");
+										send.setEnabled(true);
+									} catch (RTSPException e) {
+									write(sysname, e.getMessage());
+									}
+								} catch (BadLocationException e) {
+									//error handling
+								}
+							}
+						});
+						
+					} catch (RTSPException e) {
+						write(sysname, e.getMessage());// maybe do more here?
+					}
+					
+					
+				} catch (BadLocationException e) {
+						//To-do proper error handling
+					}
+				}
+			});
+	    		
+	   
+	    
+	};
+	
+	public TextPanel(String name, String host, int port) throws BadLocationException {//use this when connecting to a host
+		this(name);
+		send.setText("Connecting...");
+		send.setEnabled(false);
+		
+		
+		frame.setVisible(true);
+		try {
+			write(sysname, "Connecting to "+host+" on port:"+port+". Awaiting connection");
 			SwingUtilities.invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						try {
-							session = Connection.receiverConnection(port);
+							session = Connection.senderConnection(host, port);
+			    			session.waitR();
+			    			session.sendString("ELO "+username);
+			    			session.waitA();
+			    			
+			    			String introduction = session.readString()[0]; //any other junk is simply ignored
+							
+							if (introduction.substring(0,4).equals("ELO ")){
+								othername = introduction.substring(4);
+							} else {
+								throw new RTSPException("Introduction failed. Aborting Connection. Please close window");
+							}
+			    			
+			    			write(sysname, "Connection established. Please send a message");
+							send.setText("Say");
+							send.setEnabled(true);
 						} catch (RTSPException e) {
 							write(sysname, e.getMessage());
 						}
-						write(sysname, "Connection established. Awaiting message from sender");
+						
 						
 						//enable buttons.
 					} catch (BadLocationException e) {
@@ -138,6 +226,49 @@ public class TextPanel {
 	public void write(String username, String content) throws BadLocationException {
 		messages.insertString(messages.getLength(), username+": ", boldSet);
 		messages.insertString(messages.getLength(), content+"\n", basicSet);	
+	}
+	
+	
+	public void send(String username, String content) throws BadLocationException {
+		//String message = username +"\n"+ content;
+		send.setText("Wait");
+		send.setEnabled(false);
+		
+		write(username, content);
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					session.sendString("SAY "+content);
+					session.waitA();
+					session.rak();
+					
+					String[] response = session.readString(); //returns a validated message
+					
+					try {
+						write(othername, strip(response[0]));
+						for (int i = 1; i < response.length ; i++) {//prints validated message
+							write(othername, response[i]);
+						}
+					} catch (BadLocationException e) {
+						//error handling
+					}
+					
+					session.waitR();
+					send.setText("Say");
+					send.setEnabled(true);
+					
+					//System.out.println("Message Received. You may now respond.");
+					
+				} catch (RTSPException e) {
+				//handle the exception properly
+				}
+			}
+		});
+	}
+	
+	public String strip(String query) {
+		return query.substring(4);
 	}
 
 }

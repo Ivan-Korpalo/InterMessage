@@ -132,7 +132,8 @@ public class Connection {
 		
 		
 		//Big WIP area
-		if (command.length() < 4 || !command.substring(0, 4).equals("SAY ")) {
+		if (command.length() < 4 || !(	(command.substring(0, 4).equals("SAY ")	) || (command.substring(0, 4).equals("ELO ")	)	)	) {
+			System.out.println(command);//
 			System.out.println("Invalid message by sender, waiting for them to try again");
 			bak(); //test this to make sure it doesn't break anything
 			clear();
@@ -150,7 +151,7 @@ public class Connection {
 		}
 		
 		ack();//signals sender that message has been succesfully received
-    	return result.toArray(new String[result.size()]);
+    	return result.toArray(new String[result.size()]); //converts from ArrayList to a regular Array
     }
     
     public void clear() throws RTSPException {

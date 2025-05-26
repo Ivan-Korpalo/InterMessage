@@ -62,7 +62,7 @@ public class MicroNet {
 		inputpanel.add(namelabel);
 						
 		//the aforementioned textbox
-		nameinput = new JTextField("Type here");		
+		nameinput = new JTextField();		
 		inputpanel.add(nameinput);
 		
 		
@@ -74,7 +74,7 @@ public class MicroNet {
 				
 								
 		//the aforementioned textbox
-		addressinput = new JTextField("Type here");	
+		addressinput = new JTextField();	
 		inputpanel.add(addressinput);
 		
 		
@@ -86,7 +86,7 @@ public class MicroNet {
 		
 		
 		//the aforementioned textbox
-		portinput = new JTextField("Type here");	
+		portinput = new JTextField();	
 		inputpanel.add(portinput);
 		
 		
@@ -107,13 +107,13 @@ public class MicroNet {
 		//button functionality
 		receiver.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-			host();}
+			host(nameinput.getText(), Integer.parseInt(portinput.getText()));}
 		});
 		
 		
 		sender.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-			connect();}
+			connect(nameinput.getText(), addressinput.getText(), Integer.parseInt(portinput.getText()));}
 		});
 		
 		
@@ -132,10 +132,10 @@ public class MicroNet {
 		
 	}
 	
-	public void host() {
+	public void host(String name, int port) {
 		TextPanel t;
 		try {
-			t = new TextPanel(Integer.parseInt(portinput.getText()));
+			t = new TextPanel(name, port);
 			t.display();
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
@@ -143,10 +143,10 @@ public class MicroNet {
 		}
 	}
 	
-	public void connect() {
+	public void connect(String name, String host, int port) {
 		TextPanel t;
 		try {
-			t = new TextPanel();
+			t = new TextPanel(name, host, port);
 			t.display();
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block

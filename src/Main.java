@@ -7,6 +7,7 @@ public class Main {
 	static boolean running = true;
 	static final String stop = "QUIT";
 	static final String talk = "SAY ";
+	static final String hello = "ELO ";
 	
 	
 	
@@ -79,9 +80,8 @@ public class Main {
 			sending(link, input);
 		} else {
 		
-		System.out.println("Message succesfully sent. Awaiting response");
-		
-		receiving(link, input);
+			System.out.println("Message succesfully sent. Awaiting response");
+			receiving(link, input);
 		}
 	}
 	
